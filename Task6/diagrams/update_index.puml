@@ -1,0 +1,28 @@
+@startuml
+
+participant "Планировщик" as scheduler
+participant "Скрипт" as script
+participant "Источник данных" as source
+participant "Компонент разбиения" as chunks
+participant "Модель эмбеддингов" as embeddings
+database "Векторная БД" as index
+participant "Лог-файл" as logs
+
+
+scheduler -> script: запуск (python3 Task6/update_index.py)
+script -> source: читать файлы
+source --> script: список файлов
+script -> script: вычислить обновленные файлы
+script -> chunks: разбить файлы на чанки
+chunks --> script: список чанков
+script -> embeddings: вычислить эмбеддинги
+embeddings --> script: список эмбеддингов
+script -> index: обновить индекс
+index --> script: индекс обновлен
+alt "Успех"
+    script -> logs: "Данные обновлены"
+else "Ошибка"
+    script -> logs: "Ошибка при обновлении, данные не обновлены"
+end
+
+@enduml
