@@ -1,0 +1,32 @@
+@startuml
+
+actor User as user
+participant Tester as tester
+participant RAGBot as bot
+participant VectorDB as db
+participant LLM as llm
+participant "Log file" as log
+participant "Test log file" as testlog
+
+user -> tester: Run test
+loop
+    tester -> bot: Question
+    bot -> db: Retrieve relevant documents
+    bot <-- db: Relevant documents
+    bot -> bot: Generate prompt
+    bot -> llm: Send prompt\n (with relevant documents)
+    bot <-- llm: Response
+    bot -> log: Log interaction
+    bot <-- log
+    tester <-- bot
+end loop
+tester -> log: Read results
+tester <-- log: Results
+loop
+    tester -> tester: Assess result
+    tester -> testlog: Log test result
+    tester <-- testlog
+end loop
+user <-- tester
+
+@enduml
